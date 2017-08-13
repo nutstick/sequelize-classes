@@ -20,5 +20,5 @@ env:
   - NODE_ENV=test
 
 script:
-  - gulp lint
+  - npm run lint
   - npm test
