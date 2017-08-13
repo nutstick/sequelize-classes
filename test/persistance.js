@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
-import {expect} from './utils/chai';
-import {describe, it, before} from 'mocha';
+import { describe, it, before } from 'mocha';
 import { spy } from 'sinon';
+import { expect } from './utils/chai';
 import { Builder } from '../src/builder';
 import TestModel from './resources/test';
 import RelatedModel from './resources/relatedModel';
@@ -31,15 +31,13 @@ before(() => {
 });
 
 describe('sequelize instance', () => {
-  it('should be connected and authenticated', () => {
-    return expect(sequelize.authenticate()).to.be.fulfilled;
-  });
+  it('should be connected and authenticated', () => expect(sequelize.authenticate()).to.be.fulfilled);
 });
 
 describe('importing models from external files', () => {
   before(() => {
     modelSpy.reset();
-    return expect(Test.sync({force: true})).to.be.fulfilled;
+    return expect(Test.sync({ force: true })).to.be.fulfilled;
   });
 
   it('should have imported the model successfully', () => {
@@ -61,15 +59,14 @@ describe('importing models from external files', () => {
       expect(test).to.have.property('value').that.is.undefined;
     });
 
-    it('should be able to save an instance to the database', done => {
+    it('should be able to save an instance to the database', (done) => {
       test.name = 'Brad';
       test.color = 'green';
       test.save().then(() => done()).catch(done);
     });
 
-    it('should be able to be found', () => {
-      return expect(Test.findOne({where: {name: 'Brad done'}})).to.eventually.have.property('name').that.equals('Brad done');
-    });
+    it('should be able to be found', () => expect(Test.findOne({ where: { name: 'Brad done' } }))
+      .to.eventually.have.property('name').that.equals('Brad done'));
 
     it('should not allow a color other then green', () => {
       test.color = 'blue';

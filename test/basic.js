@@ -1,5 +1,5 @@
-import {expect} from './utils/chai';
-import {describe, it} from 'mocha';
+import { describe, it } from 'mocha';
+import { expect } from './utils/chai';
 import Simple from './resources/simple';
 
 let instance;

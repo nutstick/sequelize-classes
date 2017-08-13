@@ -1,6 +1,6 @@
+import { ENUM, STRING } from 'sequelize';
 import { Model } from './../../src/model';
 import { hook, validate } from './../../src/decorators';
-import {ENUM, STRING} from 'sequelize';
 
 export default class Extension extends Model {
   @hook('beforeCreate')
@@ -12,8 +12,8 @@ export default class Extension extends Model {
   }
 
   /* eslint-disable new-cap */
-  value = {type: STRING, validate: {isLowercase: true}};
-  color = {type: ENUM('blue', 'red', 'green')};
+  value = { type: STRING, validate: { isLowercase: true } };
+  color = { type: ENUM('blue', 'red', 'green') };
   /* eslint-enable new-cap */
 
   @validate()
@@ -22,6 +22,5 @@ export default class Extension extends Model {
       throw new Error('Color should be green');
     }
   }
-
 }
 

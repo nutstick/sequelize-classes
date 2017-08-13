@@ -1,6 +1,6 @@
-import {Model} from './../../src/builder';
+import { Model } from './../../src/builder';
 
 export default class SimpleExtension extends Model {
   why = 'STRING';
-  type = {test: 3};
+  type = { test: 3 };
 }

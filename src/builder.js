@@ -1,9 +1,10 @@
 import lodash from 'lodash';
 import Sequelize from 'sequelize';
+
 export * from './decorators';
 export * from './model';
 
-const defaultOptions = {database: '', databaseUrl: '', username: '', pass: '', config: {}};
+const defaultOptions = { database: '', databaseUrl: '', username: '', pass: '', config: {} };
 
 export class Builder {
   sequelize = null;
@@ -20,7 +21,7 @@ export class Builder {
     this.sequelize = new Sequelize(...sequelizeArguments);
     this.models = models.map(Model => new Model());
 
-    this.models.forEach(model => {
+    this.models.forEach((model) => {
       model.generateOptions();
       const loadedModel = model.registerModel(this.sequelize);
       this.loadedModels[loadedModel.name] = loadedModel;
@@ -29,7 +30,7 @@ export class Builder {
       });
     });
 
-    this.models.forEach(model => {
+    this.models.forEach((model) => {
       this.registerRelationship(model, this.loadedModels[model.constructor.name]);
       this.registerScopes(model, this.loadedModels[model.constructor.name]);
     });
@@ -39,13 +40,13 @@ export class Builder {
     if (!sequelizeClass.constructor._relationships) {
       return;
     }
-    sequelizeClass.constructor._relationships.forEach(relation => {
+    sequelizeClass.constructor._relationships.forEach((relation) => {
       model[relation.type](this.loadedModels[relation.model], relation.options);
     });
   }
 
   replaceIncludeModels(scope) {
-    return scope.include.map(include => {
+    return scope.include.map((include) => {
       if (typeof include.model === 'string') {
         include.model = this.loadedModels[include.model];
       }
@@ -56,13 +57,14 @@ export class Builder {
   registerScopes(sequelizeClass, model) {
     if (sequelizeClass._defaultScope) {
       if (sequelizeClass._defaultScope.include) {
-        sequelizeClass._defaultScope.include = this.replaceIncludeModels(sequelizeClass._defaultScope);
+        sequelizeClass._defaultScope.include = this
+          .replaceIncludeModels(sequelizeClass._defaultScope);
       }
-      model.addScope('defaultScope', sequelizeClass._defaultScope, {override: true});
+      model.addScope('defaultScope', sequelizeClass._defaultScope, { override: true });
     }
 
     if (sequelizeClass._scopes) {
-      Object.keys(sequelizeClass._scopes).forEach(scopeName => {
+      Object.keys(sequelizeClass._scopes).forEach((scopeName) => {
         let scope = sequelizeClass._scopes[scopeName];
         if (scope.include) {
           scope = this.replaceIncludeModels(scope);
@@ -81,7 +83,7 @@ export class Builder {
   }
 
   async syncDatabase(force = false, options = {}) {
-    return await this.sequelize.sync(lodash.assign(options, {force}));
+    return await this.sequelize.sync(lodash.assign(options, { force }));
   }
 
   async query(query, options = {}) {

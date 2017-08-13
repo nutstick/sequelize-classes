@@ -6,7 +6,7 @@ import lodash from 'lodash';
  */
 export function enumerable(value) {
   return (...params) => {
-    const [ , , descriptor ] = params;
+    const [, , descriptor] = params;
     descriptor.enumerable = value;
     descriptor.death = true;
     return descriptor;
@@ -19,7 +19,7 @@ export function enumerable(value) {
  */
 export function readOnly() {
   return (...params) => {
-    const [ , , descriptor ] = params;
+    const [, , descriptor] = params;
     descriptor.writable = false;
     return descriptor;
   };
@@ -81,7 +81,7 @@ export function hook(action) {
     const actionKey = `${key}_${action}`;
     addCleanup(target, key);
     target._hooks = target._hooks || {};
-    target._hooks[actionKey] = {fn: descriptor.value, action};
+    target._hooks[actionKey] = { fn: descriptor.value, action };
     return descriptor;
   };
 }
@@ -289,7 +289,7 @@ export function afterInit() {
 export function multipleHooks(actions = []) {
   let compositeFunction;
   return (target, key, descriptor) => {
-    actions.forEach(action => {
+    actions.forEach((action) => {
       if (!lodash.isString(action)) {
         throw new Error('All items passed to multipleHooks must be strings representing hook actions');
       }
@@ -304,12 +304,12 @@ export function beforePersisted() {
 }
 
 export function relationship(type, model, options = {}) {
-  return target => {
+  return (target) => {
     if (['belongsTo', 'hasOne', 'hasMany', 'belongsToMany'].indexOf(type) === -1) {
       throw new Error('That relation is not supported');
     }
     target._relationships = target._relationships || [];
-    target._relationships.push({type, model, options});
+    target._relationships.push({ type, model, options });
   };
 }
 
@@ -335,7 +335,7 @@ export function belongsToMany(model, options = {}) {
  * @returns {Function}
  */
 export function extend(Extension) {
-  return target => {
+  return (target) => {
     target._extensions = target._extensions || [];
     const extension = new Extension();
     extension.generateOptions();
@@ -348,7 +348,7 @@ export function extend(Extension) {
  * @returns {Function}
  */
 export function option(opt, value) {
-  return target => {
+  return (target) => {
     target._options = target._options || {};
     target._options[opt] = value;
   };
@@ -365,7 +365,7 @@ export function paranoid(value = true) {
 export function bulkify() {
   return (target, key, descriptor) => {
     const bulkedFunction = descriptor.value;
-    descriptor.value = items => {
+    descriptor.value = (items) => {
       if (!lodash.isArray(items)) {
         return bulkedFunction(items);
       }
@@ -379,7 +379,7 @@ export function bulkify() {
  * @param {object} options - configuration object
  * @returns {Function}
  */
-export function index(options = {noName: false}) {
+export function index(options = { noName: false }) {
   return (target, key, descriptor) => {
     target.constructor._indexes = target.constructor._indexes || [];
 

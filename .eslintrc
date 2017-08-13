@@ -1,9 +1,15 @@
 // Use this file as a starting point for your project's .eslintrc.
 // Copy this file, and add rule overrides as needed.
 {
+  "parser": "babel-eslint",
   "extends": "airbnb",
   "rules": {
     "comma-dangle": [2, "never"],
-    "no-trailing-spaces": [2, { "skipBlankLines": true }]
+    "no-trailing-spaces": [2, { "skipBlankLines": true }],
+    "jsx-a11y/href-no-hash": "off",
+    "no-underscore-dangle": 0,
+    "no-param-reassign": 0,
+    "no-return-await": 0,
+    "import/prefer-default-export": 0
   }
 }

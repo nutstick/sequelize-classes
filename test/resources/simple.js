@@ -10,7 +10,7 @@ import {
   bulkify,
   scope
 } from './../../src/decorators';
-import {Model} from './../../src/builder';
+import { Model } from './../../src/builder';
 import SimpleExtension from './simpleExtension';
 
 /**
@@ -22,12 +22,12 @@ export default class Simple extends Model {
   name = 'STRING';
   type = 'STRING';
 
-  @scope() defaultScope = {type: 'test'};
+  @scope() defaultScope = { type: 'test' };
 
-  @scope() withoutTest = {type: {$nin: ['test']}};
+  @scope() withoutTest = { type: { $nin: ['test'] } };
 
   @index()
-  uniqueName = {unique: true, fields: ['email']};
+  uniqueName = { unique: true, fields: ['email'] };
 
   static staticTest() {
     console.log('static');

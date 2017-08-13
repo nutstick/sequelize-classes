@@ -3,10 +3,10 @@
  * @author Brad Decker <brad.decker@conciergeauctions.com>
  */
 
-import {readOnly, enumerable} from './decorators';
-import {defineFunctions, getProperties} from './helpers';
 import Sequelize from 'sequelize';
 import lodash from 'lodash';
+import { readOnly, enumerable } from './decorators';
+import { defineFunctions, getProperties } from './helpers';
 
 // Array of members in which to clean from the constructor.
 const constructorCleanup = ['_validate', '_hooks', '_defaultScope', '_scopes'];
@@ -16,7 +16,6 @@ const relatedModels = {};
  * @class Model
  */
 export class Model {
-
   // Fields object for declaring model/table fields
   @enumerable(false) _fields = {};
 
@@ -62,16 +61,17 @@ export class Model {
   }
 
   /**
-   * Clean up the constructor object by moving externally defined items back into the instance and removing
+   * Clean up the constructor object by moving externally defined
+   * items back into the instance and removing
    * them from the original constructor object.
    */
   cleanConstructor() {
-    constructorCleanup.forEach(item => {
+    constructorCleanup.forEach((item) => {
       this[item] = this.constructor[item] || {};
       delete this.constructor[item];
     });
     const cleanup = this.constructor._cleanup || [];
-    cleanup.forEach(item => {
+    cleanup.forEach((item) => {
       delete this.constructor[item];
     });
     delete this.constructor._cleanup;
@@ -90,7 +90,7 @@ export class Model {
       this.generateOptions();
     }
 
-    Object.keys(this._fields).forEach(key => {
+    Object.keys(this._fields).forEach((key) => {
       let definition = this._fields[key];
       if (typeof definition === 'object') {
         definition.type = dataTypes[definition.type];
@@ -102,7 +102,8 @@ export class Model {
   }
 
   /**
-   * Loop through the hooks declared in _hooks and add them to the model schema through the addHook method.
+   * Loop through the hooks declared in _hooks and add them to
+   * the model schema through the addHook method.
    * @param {Object} model - instance of the model
    */
   @readOnly()
@@ -111,14 +112,15 @@ export class Model {
       throw new Error('declareHooks called before model generated');
     }
 
-    Object.keys(this._hooks).forEach(key => {
+    Object.keys(this._hooks).forEach((key) => {
       const hook = this._hooks[key];
       model.addHook(hook.action, key, hook.fn);
     });
   }
 
   /**
-   * Loop through all of the extensions added into this model and inherit all of the extension methods and fields.
+   * Loop through all of the extensions added into this model and
+   * inherit all of the extension methods and fields.
    */
   @readOnly()
   runExtensions() {
@@ -139,14 +141,18 @@ export class Model {
       '_scopes'
     ];
 
+    /* eslint-disable */
     for (const field of fields) {
       this[field] = lodash.merge(...lodash.map(this.constructor._extensions, field), this[field]);
     }
+    /* eslint-enable */
   }
 
   /**
-   * Sequelize-Six requires all of the configuration level fields to be defined prior to registering a model schema
-   * this function generates all of these options, and assigns function definitions to the appropriate configuration
+   * Sequelize-Six requires all of the configuration level fields to be defined
+   * prior to registering a model schema
+   * this function generates all of these options, and assigns function definitions
+   * to the appropriate configuration
    * object. If it is called more than once it will not regenerate options, to aid in performance.
    */
   @readOnly()
@@ -160,7 +166,8 @@ export class Model {
   }
 
   /**
-   * This is a shortcut to call sequelize.define. It adds in all of the configuration options that are built with
+   * This is a shortcut to call sequelize.define. It adds in all of the configuration options
+   * that are built with
    * the Sequelize-Six library. Returns the model returned from the define call.
    * @returns {Model}
    */
@@ -185,27 +192,28 @@ export class Model {
       return;
     }
 
+    /* eslint-disable */
     for (const relation of this.constructor._relationships) {
       if (typeof relatedModels[relation.model] === 'undefined') {
         relatedModels[relation.model] = sequelize.import(relation.file);
       }
       model[relation.type](relatedModels[relation.model], relation.options);
     }
+    /* eslint-enable */
   }
 
   /**
-   * Sequelize allows you to create a export function in which you define your models. This function allows you to
-   * export Sequelize-Six Models without creating an instance or manually building these functions. Simply do
-   * export default Model.exportModel();
+   * Sequelize allows you to create a export function in which you define your models.
+   * This function allows you to export Sequelize-Six Models without creating an instance
+   * or manually building these functions. Simply do export default Model.exportModel();
    *
    * @returns {Function}
    */
   static exportModel() {
-    return sequelize => {
+    return (sequelize) => {
       const model = new this();
       model.generateOptions();
       return model.registerModel(sequelize);
     };
   }
-
 }

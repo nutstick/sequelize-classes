@@ -11,7 +11,8 @@ const ignore = [
 
 
 /**
- * Get the properties on the model, loops over Object.keys and thus skips over non-enumerable properties
+ * Get the properties on the model, loops over Object.keys and 
+ * thus skips over non-enumerable properties
  * @param {object} model - Model instance
  * @returns {Object}
  */
@@ -24,18 +25,20 @@ export function getProperties(model) {
 }
 
 /**
- * Responsible for looping through all functions on the model and assigning them to the appropriate configuration
- * object
- * @param {object} model - instance of our model
+ * Gets a array of functions that belong to object.
+ * @param {object} object
+ * @param {Boolean} isStatic - when true, object is the constructor of the model
+ * @returns {Array}
  */
-export function defineFunctions(model) {
-  for (const [target, name, method] of findFunctions(model)) {
-    // noinspection JSUnusedAssignment
-    model[target][name] = method;
-  }
+function getFunctions(object, isStatic = false) {
+  return Object.getOwnPropertyNames(object).map(name => ({
+    ...Object.getOwnPropertyDescriptor(object, name),
+    name,
+    isStatic
+  }));
 }
 
-/** helpers **/
+/** helpers * */
 
 /**
  * Adds getter and/or setter methods to a field definition.
@@ -53,41 +56,6 @@ function addToDefinition(field, method) {
   if (method.set) fieldTarget.set = method.set;
 
   return fieldTarget;
-}
-
-/**
- * Gets a array of functions that belong to object.
- * @param {object} object
- * @param {Boolean} isStatic - when true, object is the constructor of the model
- * @returns {Array}
- */
-function getFunctions(object, isStatic = false) {
-  return Object.getOwnPropertyNames(object).map(name => ({
-    ...Object.getOwnPropertyDescriptor(object, name),
-    name,
-    isStatic
-  }));
-}
-
-/**
- * Iterator function that lets us loop through a model's functions
- * @param {object} model - Model instance
- */
-function* findFunctions(model) {
-  const staticFunctions = getFunctions(model.constructor, true);
-  const memberFunctions = getFunctions(Object.getPrototypeOf(model));
-
-  for (const method of staticFunctions.filter(filterFunction)) {
-    for (const result of parseFunction(method, model)) {
-      yield result;
-    }
-  }
-
-  for (const method of memberFunctions.filter(filterFunction)) {
-    for (const result of parseFunction(method, model)) {
-      yield result;
-    }
-  }
 }
 
 /**
@@ -110,7 +78,8 @@ function isField(name, object) {
 }
 
 /**
- * Determines which configuration object to add the function to based on it's descriptor's properties
+ * Determines which configuration object to add the function
+ * to based on it's descriptor's properties
  * @param {object} method - function descriptor
  * @param {object} model - model instance
  */
@@ -129,6 +98,40 @@ function* parseFunction(method, model) {
     target = '_classMethods';
   }
   yield [target, method.name, method.value];
+}
+
+/**
+ * Iterator function that lets us loop through a model's functions
+ * @param {object} model - Model instance
+ */
+function* findFunctions(model) {
+  const staticFunctions = getFunctions(model.constructor, true);
+  const memberFunctions = getFunctions(Object.getPrototypeOf(model));
+
+  /* eslint-disable */
+  for (const method of staticFunctions.filter(filterFunction)) {
+    for (const result of parseFunction(method, model)) {
+      yield result;
+    }
+  }
+
+  for (const method of memberFunctions.filter(filterFunction)) {
+    for (const result of parseFunction(method, model)) {
+      yield result;
+    }
+  }
+}
+
+/**
+ * Responsible for looping through all functions on the model and
+ * assigning them to the appropriate configuration
+ * object
+ * @param {object} model - instance of our model
+ */
+export function defineFunctions(model) {
+  findFunctions(model).forEach(([target, name, method]) => {
+    model[target][name] = method;
+  });
 }
 
 /**
