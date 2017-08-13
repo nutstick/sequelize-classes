@@ -17,7 +17,7 @@ const ignore = [
  */
 export function getProperties(model) {
   const properties = {};
-  Object.keys(model).forEach(name => {
+  Object.keys(model).forEach((name) => {
     properties[name] = model[name];
   });
   return properties;
@@ -46,7 +46,7 @@ export function defineFunctions(model) {
 function addToDefinition(field, method) {
   let fieldTarget = field;
   if (typeof field !== 'object') {
-    fieldTarget = {type: field};
+    fieldTarget = { type: field };
   }
 
   if (method.get) fieldTarget.get = method.get;
