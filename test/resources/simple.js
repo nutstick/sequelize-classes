@@ -30,11 +30,11 @@ export default class Simple extends Model {
   uniqueName = { unique: true, fields: ['email'] };
 
   static staticTest() {
-    console.log('static');
+    console.log('static'); // eslint-disable-line no-console
   }
 
   test() {
-    console.log(this.name);
+    console.log(this.name); // eslint-disable-line no-console
   }
 
   get cool() {

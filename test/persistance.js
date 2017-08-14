@@ -38,7 +38,6 @@ describe('sequelize instance', () => {
 describe('importing models from external files', () => {
   before(() => {
     modelSpy.reset();
-    console.log(Test);
     return expect(Test.sync({ force: true })).to.be.fulfilled;
   });
 
@@ -52,7 +51,6 @@ describe('importing models from external files', () => {
     });
 
     it('should have a build method', () => {
-      console.log(Test);
       expect(Test).to.have.property('build').that.is.a('function');
       test = Test.build();
     });
