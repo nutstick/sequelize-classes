@@ -31,7 +31,7 @@ node_modules
 .idea
 
 # Ignore our lib folder
-lib
+# lib
 
 .env
 .env.development
