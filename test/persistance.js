@@ -19,6 +19,7 @@ before(() => {
     username: process.env.USERNAME,
     pass: process.env.PASSWORD,
     config: {
+      host: process.env.DATABASE_URL,
       port: process.env.PORT,
       logging: false,
       dialect: 'postgres'
